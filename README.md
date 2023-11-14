@@ -41,3 +41,16 @@ options:
   --prev-dir DIR        Directory of previously loaded images. Useful for skipping the loading of already separated
                         images in another directory.
 ```
+
+### Links
+
+To get correct links, follow the steps below:
+
+1. Open [Yandex Images](https://yandex.com/images).
+2. Search for images you need.
+3. Set the search parameters:
+   - Specify size, orientation, type or color.
+   - Provide a site URL.
+   - Find similar images.
+4. Open the first image preview.
+5. Copy a link in the browser.
