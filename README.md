@@ -1,8 +1,9 @@
 # Yandex Images Crawler
 
-[![PyPI version](https://badge.fury.io/py/yandex-images-crawler.svg)](https://pypi.python.org/pypi?:action=display&name=yandex-images-crawler)
-[![Downloads](https://pepy.tech/badge/yandex-images-crawler)](https://pepy.tech/project/yandex-images-crawler)
-[![License: MIT](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
+[![PyPI - Version](https://img.shields.io/pypi/v/yandex-images-crawler?style=for-the-badge&color=blue)](https://pypi.org/project/yandex-images-crawler/)
+[![Downloads](https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fstatic.pepy.tech%2Fbadge%2Fyandex-images-crawler&query=%2F%2F*%5Blocal-name()%20%3D%20%22text%22%5D%5Blast()%5D&style=for-the-badge&label=Downloads&color=mediumpurple)](https://www.pepy.tech/projects/yandex-images-crawler)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/yandex-images-crawler?style=for-the-badge)](https://pypi.python.org/pypi/yandex-images-crawler)
+[![GitHub License](https://img.shields.io/github/license/suborofu/yandex-images-crawler?style=for-the-badge&color=limegreen)](https://opensource.org/licenses/MIT)
 
 ## Description
 
@@ -14,13 +15,13 @@ Unlike most other projects, this package allows you to download images according
 
 You can use the `yandex_images_crawler/download.py` script or install the package via `pip`
 
-```cmd
+```
 pip install yandex-images-crawler
 ```
 
 ## Usage
 
-```cmd
+```
 C:\Users\suborofu> yandex-images-crawler --help
 usage: yandex-images-crawler [-h] [--links LINK1,LINK2,...] [--links-file FILE] [--size WxH] [--count N] [--dir DIR]
                              [--prev-dir DIR]
