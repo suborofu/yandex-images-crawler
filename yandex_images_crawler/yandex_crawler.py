@@ -25,7 +25,7 @@ class YandexCrawler:
             width, height = [
                 int(i)
                 for i in self.driver.find_element(
-                    By.CSS_SELECTOR, "span[class*='OpenImageButton-RightText']"
+                    By.CSS_SELECTOR, "span[class*='OpenImageButton-SaveSize']"
                 ).text.split("×")
             ]
         except:
@@ -36,10 +36,10 @@ class YandexCrawler:
                 except:
                     pass
 
-        link = self.driver.find_element(By.CLASS_NAME, "MMImage-Origin").get_attribute("src")
+        link = self.driver.find_element(By.CLASS_NAME, "MMImage-Preview").get_attribute("src")
         if "avatars.mds.yandex.net" in link or "yandex-images" in link:
             time.sleep(5)
-            link = self.driver.find_element(By.CLASS_NAME, "MMImage-Origin").get_attribute("src")
+            link = self.driver.find_element(By.CLASS_NAME, "MMImage-Preview").get_attribute("src")
             if "avatars.mds.yandex.net" in link or "yandex-images" in link:
                 return
 
@@ -47,7 +47,7 @@ class YandexCrawler:
 
     def __next_preview(self):
         try:
-            btn = self.driver.find_element(By.CSS_SELECTOR, "div[class*='CircleButton_type_next']")
+            btn = self.driver.find_element(By.CSS_SELECTOR, "button[class*='CircleButton_type_next']")
             btn.click()
         except:
             self.logger.critical(f"Process #{self.id} can't move to the next image.")

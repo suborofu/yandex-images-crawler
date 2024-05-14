@@ -2,7 +2,7 @@ from setuptools import setup
 from pathlib import Path
 
 NAME = "yandex-images-crawler"
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 DESCRIPTION = "Crawler/parser for Yandex Images"
 URL = "https://github.com/suborofu/yandex-images-crawler"
 EMAIL = "alexfromsuvorov@gmail.com"
@@ -12,7 +12,6 @@ CLASSIFIERS = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
