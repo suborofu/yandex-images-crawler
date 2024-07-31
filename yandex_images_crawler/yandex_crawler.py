@@ -7,40 +7,82 @@ from selenium.webdriver.common.by import By
 
 
 class YandexCrawler:
-    def __init__(self, start_link: str, load_queue: Queue, id=0, is_active: Value = Value("i", True)):
-        self.start_link = start_link
-        self.load_queue = load_queue
-        self.id = str(id)
+    def __init__(
+        self,
+        start_link: str,
+        load_queue: Queue,
+        id=0,
+        is_active=Value("i", True),
+    ):
+        self.start_link: str = start_link
+        self.load_queue: Queue = load_queue
+        self.id: str = str(id)
         self.is_active = is_active
 
         self.driver = webdriver.Firefox()
 
-        self.logger = get_logger()
-        self.logger.addHandler(logging.StreamHandler())
+        self.logger: logging.Logger = get_logger()
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter("%(levelname)s - %(asctime)s - %(message)s"))
+        self.logger.addHandler(handler)
         self.logger.setLevel(logging.INFO)
 
     def __get_image_link(self):
         width, height = None, None
-        try:
-            width, height = [
-                int(i)
-                for i in self.driver.find_element(
-                    By.CSS_SELECTOR, "span[class*='OpenImageButton-SaveSize']"
-                ).text.split("×")
-            ]
-        except:
-            for elem in self.driver.find_elements(By.CSS_SELECTOR, "span[class*='Button2-Text']"):
+
+        size_sources = [
+            "OpenImageButton-SizesButton",
+            "MMViewerButtons-ImageSizes",
+            "OpenImageButton-SaveSize",
+            "Button2-Text",
+        ]
+
+        for source in size_sources:
+            if width is not None and height is not None:
+                break
+            for elem in self.driver.find_elements(By.CLASS_NAME, source):
                 try:
                     width, height = [int(i) for i in elem.text.split("×")]
                     break
                 except:
                     pass
+        else:
+            if width is None or height is None:
+                self.logger.critical(f"Process #{self.id} can't get image size.")
+                return
 
-        link = self.driver.find_element(By.CLASS_NAME, "MMImage-Preview").get_attribute("src")
-        if "avatars.mds.yandex.net" in link or "yandex-images" in link:
-            time.sleep(5)
-            link = self.driver.find_element(By.CLASS_NAME, "MMImage-Preview").get_attribute("src")
-            if "avatars.mds.yandex.net" in link or "yandex-images" in link:
+        link = None
+
+        link_sources = [
+            "OpenImageButton-Save",
+            "MMViewerButtons-OpenImage",
+            "MMViewerButtons-Button",
+            "Button2_link",
+            "Button2_view_default",
+        ]
+
+        blacklist = [
+            "yandex-images",
+            "avatars.mds.yandex.net",
+        ]
+
+        for source in link_sources:
+            if link is not None:
+                break
+            for elem in self.driver.find_elements(By.CLASS_NAME, source):
+                try:
+                    link = elem.get_attribute("href")
+                    for b in blacklist:
+                        if b in link:
+                            time.sleep(5)
+                            link = elem.get_attribute("href")
+                            break
+                    break
+                except:
+                    pass
+        else:
+            if link is None:
+                self.logger.critical(f"Process #{self.id} can't get image link.")
                 return
 
         self.load_queue.put((link, (width, height)))

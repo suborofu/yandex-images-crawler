@@ -2,7 +2,7 @@ from setuptools import setup
 from pathlib import Path
 
 NAME = "yandex-images-crawler"
-VERSION = "1.2.0"
+VERSION = "1.3.0"
 DESCRIPTION = "Crawler/parser for Yandex Images"
 URL = "https://github.com/suborofu/yandex-images-crawler"
 EMAIL = "alexfromsuvorov@gmail.com"

@@ -7,13 +7,15 @@ import time
 
 
 class CountChecker:
-    def __init__(self, image_dir: Union[Path, str], image_count: int, is_active: Value = Value("i", True)):
-        self.image_dir = image_dir
-        self.image_count = image_count
+    def __init__(self, image_dir: Union[Path, str], image_count: int, is_active=Value("i", True)):
+        self.image_dir: Path = Path(image_dir)
+        self.image_count: int = image_count
         self.is_active = is_active
 
-        self.logger = get_logger()
-        self.logger.addHandler(logging.StreamHandler())
+        self.logger: logging.Logger = get_logger()
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter("%(levelname)s - %(asctime)s - %(message)s"))
+        self.logger.addHandler(handler)
         self.logger.setLevel(logging.INFO)
 
     def run(self):

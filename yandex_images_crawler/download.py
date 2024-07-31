@@ -3,9 +3,9 @@ try:
     from .image_loader import ImageLoader
     from .yandex_crawler import YandexCrawler
 except ImportError:
-    from yandex_crawler import YandexCrawler
-    from image_loader import ImageLoader
     from count_checker import CountChecker
+    from image_loader import ImageLoader
+    from yandex_crawler import YandexCrawler
 
 import argparse
 import logging
@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import FrozenSet, List, Tuple, Union
 
 
-def __start_crawler(start_link: str, load_queue: Queue, id: int, is_active: Value):
+def __start_crawler(start_link: str, load_queue: Queue, id: int, is_active):
     crawler = YandexCrawler(
         start_link=start_link,
         load_queue=load_queue,
@@ -30,7 +30,7 @@ def __start_loader(
     image_size: Tuple[int, int],
     image_dir: Union[str, Path],
     skip_files: FrozenSet[str],
-    is_active: Value,
+    is_active,
 ):
     crawler = ImageLoader(
         load_queue=load_queue,
@@ -42,7 +42,7 @@ def __start_loader(
     crawler.run()
 
 
-def __start_checker(image_dir: Union[Path, str], image_count: int, is_active: Value):
+def __start_checker(image_dir: Union[Path, str], image_count: int, is_active):
     checker = CountChecker(
         image_dir=image_dir,
         image_count=image_count,
@@ -199,6 +199,7 @@ def __parse_args():
 
 
 def main():
+    logging.basicConfig(format="%(levelname)s - %(asctime)s - %(message)s")
     args = __parse_args()
     download(args.links, args.size, args.count, args.image_dir, args.skip_files)
 

@@ -15,13 +15,13 @@ Unlike most other projects, this package allows you to download images according
 
 You can use the `yandex_images_crawler/download.py` script or install the package via `pip`
 
-```
+```cmd
 pip install yandex-images-crawler
 ```
 
 ## Usage
 
-```
+```cmd
 C:\Users\suborofu> yandex-images-crawler --help
 usage: yandex-images-crawler [-h] [--links LINK1,...] [--links-file FILE] [--size WxH] [--count N]
                              [--dir DIR] [--prev-dir DIR]

@@ -19,21 +19,24 @@ class ImageLoader:
         image_size: Tuple[int, int],
         image_dir: Union[str, Path],
         skip_files: FrozenSet[str] = frozenset(),
-        is_active: Value = Value("i", True),
+        is_active=Value("i", True),
     ):
-        self.load_queue = load_queue
-        self.min_width, self.min_height = image_size
-        self.image_dir = Path(image_dir)
-        self.skip_files = skip_files
+        self.load_queue: Queue = load_queue
+        self.min_width: int = image_size[0]
+        self.min_height: int = image_size[1]
+        self.image_dir: Path = Path(image_dir)
+        self.skip_files: set[str] = skip_files
         self.is_active = is_active
 
-        self.headers = {
+        self.headers: dict[str, str] = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0",
             "Referer": "https://yandex.com/",
         }
 
-        self.logger = get_logger()
-        self.logger.addHandler(logging.StreamHandler())
+        self.logger: logging.Logger = get_logger()
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter("%(levelname)s - %(asctime)s - %(message)s"))
+        self.logger.addHandler(handler)
         self.logger.setLevel(logging.INFO)
 
     def run(self):
