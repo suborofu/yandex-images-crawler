@@ -13,7 +13,7 @@ Unlike most other projects, this package allows you to download images according
 
 ## Installation
 
-You can use the `yandex_images_crawler/download.py` script or install the package via `pip`
+You can use the `yandex_images_crawler/download.py` script or install the package via `pip`.
 
 ```cmd
 pip install yandex-images-crawler
@@ -21,7 +21,7 @@ pip install yandex-images-crawler
 
 ## Usage
 
-```cmd
+```
 C:\Users\suborofu> yandex-images-crawler --help
 usage: yandex-images-crawler [-h] [--links LINK1,...] [--links-file FILE] [--size WxH] [--count N]
                              [--dir DIR] [--prev-dir DIR]
@@ -52,5 +52,4 @@ To get correct links, follow the steps below:
    - Specify size, orientation, type or color.
    - Provide a site URL.
    - Find similar images.
-4. Open the first image preview.
-5. Copy a link in the browser ([example](https://yandex.com/images/search?img_url=https%3A%2F%2F1.bp.blogspot.com%2F-oVRA16EtMGI%2FYDFWXxU36AI%2FAAAAAAAGHLw%2FbdLd23pcZIoqDXZMrQZ-bWRsYan8hIm9wCLcBGAsYHQ%2Fs1600%2Frickroll4k.gif&lr=10831&pos=0&quality=95&rdrnd=174777&redircnt=1700337169.1&rpt=simage&sign=304c88d47ac4545285d022ba151a7c35&text=rick%20roll%20meme&type=album)).
+4. Copy a link in the browser ([example](https://yandex.com/images/search?lr=10831&quality=95&rdrnd=531684&redircnt=1737888986.1&sign=304c88d47ac4545285d022ba151a7c35&text=rick%20roll%20meme&type=album)).

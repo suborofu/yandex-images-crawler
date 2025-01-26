@@ -35,7 +35,9 @@ class ImageLoader:
 
         self.logger: logging.Logger = get_logger()
         handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter("%(levelname)s - %(asctime)s - %(message)s"))
+        handler.setFormatter(
+            logging.Formatter("%(levelname)s - %(asctime)s - %(message)s")
+        )
         self.logger.addHandler(handler)
         self.logger.setLevel(logging.INFO)
 
@@ -46,10 +48,16 @@ class ImageLoader:
 
             link, (width, height) = self.load_queue.get()
 
-            if width is None or height is None or (width >= self.min_width and height >= self.min_height):
+            if (
+                width is None
+                or height is None
+                or (width >= self.min_width and height >= self.min_height)
+            ):
                 self.logger.info(link)
                 try:
-                    response = requests.get(link, headers=self.headers, verify=False, timeout=10)
+                    response = requests.get(
+                        link, headers=self.headers, verify=False, timeout=10
+                    )
                 except:
                     continue
                 if 200 <= response.status_code < 300:
@@ -69,4 +77,5 @@ class ImageLoader:
                         and width >= self.min_width
                         and height >= self.min_height
                     ):
+                        img = img.convert("RGB")
                         img.save(img_path, "PNG")

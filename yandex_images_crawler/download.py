@@ -15,11 +15,14 @@ from pathlib import Path
 from typing import FrozenSet, List, Tuple, Union
 
 
-def __start_crawler(start_link: str, load_queue: Queue, id: int, is_active):
+def __start_crawler(
+    start_link: str, load_queue: Queue, id: int, headless_mode: bool, is_active
+):
     crawler = YandexCrawler(
         start_link=start_link,
         load_queue=load_queue,
         id=id,
+        headless_mode=headless_mode,
         is_active=is_active,
     )
     crawler.run()
@@ -57,6 +60,8 @@ def download(
     image_count: int,
     image_dir: Union[str, Path],
     skip_files: FrozenSet[str],
+    loaders_per_link: int,
+    headless_mode: bool,
 ):
     proc_num = len(links)
 
@@ -67,7 +72,7 @@ def download(
     crawlers = [
         Process(
             target=__start_crawler,
-            args=(links[i], load_queue, i, is_active),
+            args=(links[i], load_queue, i, headless_mode, is_active),
             daemon=True,
         )
         for i in range(proc_num)
@@ -79,7 +84,7 @@ def download(
             args=(load_queue, image_size, image_dir, skip_files, is_active),
             daemon=True,
         )
-        for _ in range(proc_num * 2)
+        for _ in range(proc_num * loaders_per_link)
     ]
 
     checker = Process(
@@ -110,7 +115,8 @@ def __parse_args():
         required=False,
         help="""Full links to image sets for download.
         Links should be separated by commas.
-        Each link should lead to an open preview of the image.""",
+        Each link should lead to an image search result or to an open preview of an image.
+        The program will open all links each in its own window.""",
     )
     parser.add_argument(
         "--links-file",
@@ -120,7 +126,8 @@ def __parse_args():
         required=False,
         help="""Text file with full links to image sets for download.
         Links should be separated by newlines.
-        Each link should lead to an open preview of the image.""",
+        Each link should lead to an image search result or to an open preview of an image.
+        The program will open all links each in its own window.""",
     )
     parser.add_argument(
         "--size",
@@ -138,6 +145,7 @@ def __parse_args():
         default=0,
         required=False,
         help="""Required count of images to download.
+        Do not set it at all for infinite count.
         A message appears if the desired number of images are downloaded.""",
     )
     parser.add_argument(
@@ -158,13 +166,31 @@ def __parse_args():
         Program skips the loading of already loaded images in another directory.
         Useful for re-downloading.""",
     )
+    parser.add_argument(
+        "--loaders-per-link",
+        type=int,
+        metavar="N",
+        default=1,
+        required=False,
+        help="""Number of loaders per link.
+        Use larger values to speed up loading, but take into account your computer's performance.""",
+    )
+    parser.add_argument(
+        "--headless",
+        action="store_true",
+        default=False,
+        required=False,
+        help="""Run the program in headless mode.
+        The program will not open any browser windows.
+        You can't fix some problems in browser windows manually, so use this option with caution.""",
+    )
 
     args = parser.parse_args()
     new_args = argparse.Namespace()
 
     new_args.links = []
     if args.links is not None and args.links_file is not None:
-        logging.critical("Provide links via --links only or --links_file only")
+        logging.critical("Provide links via --links only or --links-file only")
         exit(-1)
     if args.links is not None:
         new_args.links = args.links.split(",")
@@ -172,7 +198,7 @@ def __parse_args():
         with open(args.links_file, "r") as f:
             new_args.links = f.read().strip().split()
     if len(new_args.links) == 0:
-        logging.critical("Provide links via --links only or --links_file only")
+        logging.critical("Provide links via --links only or --links-file only")
         exit(-1)
 
     new_args.size = tuple(map(int, args.size.split("x")))
@@ -195,13 +221,24 @@ def __parse_args():
 
     new_args.skip_files = frozenset([file.split(".")[0] for file in previous_images])
 
+    new_args.loaders_per_link = max(1, args.loaders_per_link)
+    new_args.headless_mode = args.headless
+
     return new_args
 
 
 def main():
     logging.basicConfig(format="%(levelname)s - %(asctime)s - %(message)s")
     args = __parse_args()
-    download(args.links, args.size, args.count, args.image_dir, args.skip_files)
+    download(
+        args.links,
+        args.size,
+        args.count,
+        args.image_dir,
+        args.skip_files,
+        args.loaders_per_link,
+        args.headless_mode,
+    )
 
 
 if __name__ == "__main__":

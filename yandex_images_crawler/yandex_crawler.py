@@ -12,6 +12,7 @@ class YandexCrawler:
         start_link: str,
         load_queue: Queue,
         id=0,
+        headless_mode=False,
         is_active=Value("i", True),
     ):
         self.start_link: str = start_link
@@ -19,11 +20,23 @@ class YandexCrawler:
         self.id: str = str(id)
         self.is_active = is_active
 
-        self.driver = webdriver.Firefox()
+        driver_options = webdriver.ChromeOptions()
+        driver_options.add_argument("--disable-blink-features=AutomationControlled")
+        driver_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        driver_options.add_experimental_option("useAutomationExtension", False)
+        driver_options.add_argument("--incognito")
+        if headless_mode:
+            driver_options.add_argument("--headless")
+        self.driver = webdriver.Chrome(options=driver_options)
+        self.driver.execute_script(
+            "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
+        )
 
         self.logger: logging.Logger = get_logger()
         handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter("%(levelname)s - %(asctime)s - %(message)s"))
+        handler.setFormatter(
+            logging.Formatter("%(levelname)s - %(asctime)s - %(message)s")
+        )
         self.logger.addHandler(handler)
         self.logger.setLevel(logging.INFO)
 
@@ -87,15 +100,34 @@ class YandexCrawler:
 
         self.load_queue.put((link, (width, height)))
 
-    def __next_preview(self):
+    def __open_first_preview(self):
         try:
-            btn = self.driver.find_element(By.CSS_SELECTOR, "button[class*='CircleButton_type_next']")
+            btn = self.driver.find_element(
+                By.CSS_SELECTOR, "button[class*='CircleButton_type_next']"
+            )
+        except:
+            try:
+                btn = self.driver.find_element(
+                    By.CSS_SELECTOR, "img[class*='ImagesContentImage-Image_clickable']"
+                )
+                btn.click()
+            except:
+                self.logger.critical(f"Process #{self.id} can't open the first image.")
+
+    def __open_next_preview(self):
+        try:
+            btn = self.driver.find_element(
+                By.CSS_SELECTOR, "button[class*='CircleButton_type_next']"
+            )
             btn.click()
         except:
             self.logger.critical(f"Process #{self.id} can't move to the next image.")
 
     def run(self):
         self.driver.get(self.start_link)
+
+        self.__open_first_preview()
+
         while True:
             if not self.is_active.value:
                 self.driver.close()
@@ -103,7 +135,7 @@ class YandexCrawler:
 
             try:
                 self.__get_image_link()
-                self.__next_preview()
+                self.__open_next_preview()
             except Exception as e:
                 self.logger.critical(e)
                 time.sleep(10)
